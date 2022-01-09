@@ -1,51 +1,41 @@
 #define PY_SSIZE_T_CLEAN  /* Make "s#" use Py_ssize_t rather than int. */
 #include <Python.h>
-
+#include <math.h>
+#include <stdio.h>
 
 /*
 https://docs.python.org/3/extending/extending.html
 */
-static PyObject *
-keywdarg_parrot(PyObject *self, PyObject *args, PyObject *keywds)
+static PyObject * distance(PyObject *self, PyObject *args)
 {
-    int voltage;
-    const char *state = "a stiff";
-    const char *action = "voom";
-    const char *type = "Norwegian Blue";
+    double x1,y1;
+    double x2,y2;
 
-    static char *kwlist[] = {"voltage", "state", "action", "type", NULL};
-
-    if (!PyArg_ParseTupleAndKeywords(args, keywds, "i|sss", kwlist,
-                                     &voltage, &state, &action, &type))
+    if ( !PyArg_ParseTuple(args, "(dd)(dd)", &x1, &y1, &x2, &y2) )
         return NULL;
 
-    printf("-- This parrot wouldn't %s if you put %i Volts through it.\n",
-           action, voltage);
-    printf("-- Lovely plumage, the %s -- It's %s!\n", type, state);
+    double distance = sqrt( ((y2-y1)*(y2-y1)) + ((x2-x1)*(x2-x1)) );
 
-    Py_RETURN_NONE;
+    printf("%f, %f, %f, %f\n",x1,y1,x2,y2);
+
+    return PyFloat_FromDouble(distance);
 }
 
-static PyMethodDef keywdarg_methods[] = {
-    /* The cast of the function is necessary since PyCFunction values
-     * only take two PyObject* parameters, and keywdarg_parrot() takes
-     * three.
-     */
-    {"parrot", (PyCFunction)(void(*)(void))keywdarg_parrot, METH_VARARGS | METH_KEYWORDS,
-     "Print a lovely skit to standard output."},
-    {NULL, NULL, 0, NULL}   /* sentinel */
+static PyMethodDef methods[] = {
+    {"distance", (PyCFunction)distance, METH_VARARGS, "Calculate distance between two points."},
+    {NULL, NULL, 0, NULL}
 };
 
-static struct PyModuleDef keywdargmodule = {
+static struct PyModuleDef module = {
     PyModuleDef_HEAD_INIT,
-    "keywdarg",
+    "pysimplephys",
     NULL,
     -1,
-    keywdarg_methods
+    methods
 };
 
 PyMODINIT_FUNC
-PyInit_keywdarg(void)
+PyInit_pysimplephys(void)
 {
-    return PyModule_Create(&keywdargmodule);
+    return PyModule_Create(&module);
 }
