@@ -6,7 +6,41 @@
 
 /*
 https://docs.python.org/3/extending/extending.html
+
+
+TO DO:
+Pendulum maths:
+
+T = 2π√(I/mgD)
+where:
+
+m is the mass of the pendulum;
+I is the moment of inertia of the mass; and
+D is the distance from the center of mass to the point of suspension.
+
+
+
+More on the Pendulum
+const float gravity = 9.8;     // units of metres/sec/sec
+const float deltaT  = 0.001;   // equals 0.001 sec or 1 millisecond
+
+var xVelocity = 0.010;         // units metres/sec equals 10 cm/sec 
+var x = 0.0;                   // units metres
+var y = 0.0;                   // units metres
+
+while (true) {
+  var xAcceleration = -gravity * (x/L) * (L-y)/L;
+
+  x += (xVelocity + (xAcceleration/2 * deltaT)) * deltaT;
+  y  = Math.SQRT(L*L - x*x) - L; 
+
+  xVelocity += xAcceleration * deltaT;
+}
+
+
 */
+
+
 static PyObject * distangle(PyObject *self, PyObject *args)
 {
     double x1,y1;
@@ -28,33 +62,26 @@ static PyObject * distangle(PyObject *self, PyObject *args)
 
 
 
+static PyObject * anglecoords(PyObject *self, PyObject *args)
+{
+    double angle;
+    double distance;
 
+    if ( !PyArg_ParseTuple(args, "(dd)", &angle, &distance) )
+        return NULL;
 
+    double x = distance * cos(angle * M_PI / 180.0);
+    double y = distance * sin(angle * M_PI / 180.0);
 
-/*
-const float gravity = 9.8;     // units of metres/sec/sec
-const float deltaT  = 0.001;   // equals 0.001 sec or 1 millisecond
-
-var xVelocity = 0.010;         // units metres/sec equals 10 cm/sec 
-var x = 0.0;                   // units metres
-var y = 0.0;                   // units metres
-
-while (true) {
-  var xAcceleration = -gravity * (x/L) * (L-y)/L;
-
-  x += (xVelocity + (xAcceleration/2 * deltaT)) * deltaT;
-  y  = Math.SQRT(L*L - x*x) - L; 
-
-  xVelocity += xAcceleration * deltaT;
+    return Py_BuildValue("(dd)", x, y);
 }
-*/
-
-
 
 
 static PyMethodDef methods[] = {
     {"distangle", (PyCFunction)distangle, METH_VARARGS, 
         "Calculate distance and angle from two points (tuples).\n Returns tuple with distance and angle."},
+    {"anglecoords", (PyCFunction)anglecoords, METH_VARARGS, 
+        "Calculate x and y coords from angle and distance tuple."},
     {NULL, NULL, 0, NULL}
 };
 
