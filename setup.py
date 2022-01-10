@@ -1,12 +1,12 @@
 from distutils.core import setup, Extension
 
 def main():
-    setup(name="pysimplephys",
+    setup(name="simplephys",
           version="1.0.0",
           description="Collection of fast gamemath functions.",
           author="Tero hongisto",
           author_email="tehongis@gmail.com",
-          ext_modules=[Extension("pysimplephys", ["main.c"])])
+          ext_modules=[Extension("simplephys", ["main.c"])])
 
 if __name__ == "__main__":
     main()

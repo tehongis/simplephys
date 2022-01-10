@@ -1,4 +1,4 @@
-import pysimplephys
+import simplephys
 
-print( help(pysimplephys) )
+print( simplephys.distangle((0,0),(0,5)) )
 
