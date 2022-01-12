@@ -1,14 +1,54 @@
-#define PY_SSIZE_T_CLEAN  /* Make "s#" use Py_ssize_t rather than int. */
-#include <Python.h>
+
+#define _USE_MATH_DEFINES
 #include <math.h>
+
 #include <stdio.h>
 
+#define PY_SSIZE_T_CLEAN  /* Make "s#" use Py_ssize_t rather than int. */
+#include <Python.h>
 
 /*
 https://docs.python.org/3/extending/extending.html
 
 
 TO DO:
+DOT product:
+
+
+MAX:
+#define max(a,b)             \
+({                           \
+    __typeof__ (a) _a = (a); \
+    __typeof__ (b) _b = (b); \
+    _a > _b ? _a : _b;       \
+})
+
+MIN:
+#define min(a,b)             \
+({                           \
+    __typeof__ (a) _a = (a); \
+    __typeof__ (b) _b = (b); \
+    _a < _b ? _a : _b;       \
+})
+
+Clamp:
+float Clamp01(float v) {
+  return Min(Max(v, 0.0f), 1.0f);
+}
+
+AngleInRadians
+loat AngleRad(Vector v1, Vector v2) {
+  float cosAngle = DotProduct(v1, v2) / (v1.magnitude * v2.magnitude);
+  return ArcCos(cosAngle);
+}
+
+LERP:
+float Lerp(float a, float b, float t) {
+  t = Clamp01(t); // Clamp01 makes sure t is between [0, 1]
+  return (1.0f - t) * a + t * b;
+}
+
+
 Pendulum maths:
 
 T = 2π√(I/mgD)
@@ -37,9 +77,7 @@ while (true) {
   xVelocity += xAcceleration * deltaT;
 }
 
-
 */
-
 
 static PyObject * distangle(PyObject *self, PyObject *args)
 {
